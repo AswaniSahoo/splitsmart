@@ -31,7 +31,7 @@ kiro-cli chat --agent splitsmart-accountant
 |---|---|---|---|
 | 1 | Spec-driven development | [`.kiro/specs/expense-splitter/`](.kiro/specs/expense-splitter) | EARS requirements → design (architecture, API, data model) → task plan that drove the build |
 | 2 | Steering | [`.kiro/steering/`](.kiro/steering) | `product.md`, `tech.md`, `structure.md` (always) + `money-handling.md` (fileMatch on Python files) enforcing integer-cents money |
-| 3 | Hooks | [`.kiro/hooks/`](.kiro/hooks) | `PostFileSave` ruff + re-run PBTs when `ledger.py` changes, `PostTaskExecution` full test run, `AgentStop` money-safety self-check, `PreToolUse` guard blocking `rm -rf` / DB deletion |
+| 3 | Hooks | [`.kiro/hooks/`](.kiro/hooks) | `PostFileSave` ruff + re-run PBTs when `ledger.py` changes, `PostTaskExec` full test run, `Stop` (agent stop) money-safety self-check, `PreToolUse` guard blocking `rm -rf` / DB deletion |
 | 4 | Property-based testing | [`design.md` → Correctness Properties](.kiro/specs/expense-splitter/design.md), [`tests/test_ledger_properties.py`](tests/test_ledger_properties.py) | 7 properties (money conserved, balances sum to 0, order independence, delete = undo, settle-up clears debts, ≤ n−1 transfers, format round-trip) run with Hypothesis, 200–500 cases each |
 | 5 | Powers | Kiro Powers panel + [`power-splitsmart/`](power-splitsmart) | Installed power(s) used while building, plus our own SplitSmart power (see Bonus 2) |
 | 6 | MCP | [`src/splitsmart/mcp_server.py`](src/splitsmart/mcp_server.py), [`.kiro/settings/mcp.json`](.kiro/settings/mcp.json) | Our own MCP server exposing 8 tools (`create_group`, `add_expense`, `get_balances`, `settle_up`, …) + `fetch` server; read-only tools auto-approved |

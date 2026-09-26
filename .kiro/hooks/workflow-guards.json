@@ -4,14 +4,14 @@
     {
       "name": "Run full test suite after a spec task",
       "description": "After Kiro completes a task from .kiro/specs/expense-splitter/tasks.md, verify nothing regressed.",
-      "trigger": "PostTaskExecution",
+      "trigger": "PostTaskExec",
       "action": { "type": "command", "command": "uv run pytest -q" },
       "timeout": 180
     },
     {
       "name": "Money-safety review when the agent stops",
       "description": "Reminds the agent to self-check the money-handling steering rule before finishing.",
-      "trigger": "AgentStop",
+      "trigger": "Stop",
       "action": {
         "type": "agent",
         "prompt": "Before finishing: confirm that no code you changed uses float for money (see .kiro/steering/money-handling.md) and that `uv run pytest -q` passes. If either is not true, fix it now."

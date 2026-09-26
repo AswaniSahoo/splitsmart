@@ -1,0 +1,21 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Lint and format Python on save",
+      "description": "Keeps code aligned with tech.md: ruff format + ruff check --fix whenever the agent saves a Python file.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.py$",
+      "action": { "type": "command", "command": "uv run ruff format -q . && uv run ruff check --fix -q ." },
+      "timeout": 60
+    },
+    {
+      "name": "Run property-based tests when ledger changes",
+      "description": "Any edit to the money logic re-runs the hypothesis correctness properties from the spec.",
+      "trigger": "PostFileSave",
+      "matcher": "src/splitsmart/ledger\\.py$",
+      "action": { "type": "command", "command": "uv run pytest -q tests/test_ledger_properties.py" },
+      "timeout": 120
+    }
+  ]
+}

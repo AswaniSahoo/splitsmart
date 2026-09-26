@@ -1,0 +1,36 @@
+[project]
+name = "splitsmart"
+version = "0.1.0"
+description = "Split group expenses fairly - web UI, REST API and MCP server. Built with Kiro."
+readme = "README.md"
+authors = [
+    { name = "aswanisahoo1012", email = "aswanisahoo1012@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi==0.141.1",
+    "mcp==2.2.0",
+    "uvicorn==0.54.0",
+]
+
+[project.scripts]
+splitsmart = "splitsmart:main"
+splitsmart-mcp = "splitsmart.mcp_server:main"
+
+[build-system]
+requires = ["uv_build>=0.12.18,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "httpx==0.28.1",
+    "hypothesis==6.168.1",
+    "pytest==9.1.1",
+    "ruff==0.16.9",
+]
+
+[tool.ruff]
+line-length = 110
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

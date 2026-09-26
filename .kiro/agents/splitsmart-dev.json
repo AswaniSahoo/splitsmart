@@ -1,0 +1,28 @@
+{
+  "name": "splitsmart-dev",
+  "description": "Developer agent for the SplitSmart codebase: implements spec tasks, keeps money math in integer cents, runs uv/pytest/ruff and git only.",
+  "prompt": "You are a senior Python developer working on SplitSmart. Follow the steering files and implement work from .kiro/specs/ task lists. Keep ledger.py pure. Every change to money logic must keep the correctness properties in .kiro/specs/expense-splitter/design.md passing (uv run pytest -q). Prefer small, reviewed diffs.",
+  "tools": ["read", "write", "shell", "@splitsmart", "@fetch"],
+  "allowedTools": ["read", "@splitsmart/list_groups", "@splitsmart/get_balances"],
+  "includeMcpJson": true,
+  "includePowers": true,
+  "resources": [
+    "file://README.md",
+    "file://.kiro/steering/**/*.md",
+    "file://.kiro/specs/expense-splitter/*.md"
+  ],
+  "permissions": {
+    "rules": [
+      { "capability": "shell", "match": ["uv run pytest*", "uv run ruff*", "uv sync*", "git status*", "git diff*", "git log*"], "effect": "allow" },
+      { "capability": "shell", "match": ["git push*", "uv add*"], "effect": "ask" },
+      { "capability": "shell", "match": ["rm -rf *", "sudo *", "git push --force*", "git reset --hard*"], "effect": "deny" },
+      { "capability": "fs_write", "match": ["src/**", "tests/**", ".kiro/specs/**", "README.md"], "effect": "allow" },
+      { "capability": "fs_write", "match": [".kiro/agents/**", ".kiro/settings/**", ".env*"], "effect": "deny" }
+    ]
+  },
+  "hooks": {
+    "agentSpawn": [{ "command": "git status --short" }],
+    "postToolUse": [{ "matcher": "fs_write", "command": "uv run ruff format -q . && uv run ruff check --fix -q ." }]
+  },
+  "welcomeMessage": "SplitSmart dev agent ready. Which spec task are we working on?"
+}

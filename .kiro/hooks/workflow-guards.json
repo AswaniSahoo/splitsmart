@@ -1,0 +1,32 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Run full test suite after a spec task",
+      "description": "After Kiro completes a task from .kiro/specs/expense-splitter/tasks.md, verify nothing regressed.",
+      "trigger": "PostTaskExecution",
+      "action": { "type": "command", "command": "uv run pytest -q" },
+      "timeout": 180
+    },
+    {
+      "name": "Money-safety review when the agent stops",
+      "description": "Reminds the agent to self-check the money-handling steering rule before finishing.",
+      "trigger": "AgentStop",
+      "action": {
+        "type": "agent",
+        "prompt": "Before finishing: confirm that no code you changed uses float for money (see .kiro/steering/money-handling.md) and that `uv run pytest -q` passes. If either is not true, fix it now."
+      }
+    },
+    {
+      "name": "Block destructive shell commands",
+      "description": "Gate dangerous operations: refuse rm -rf and deleting the SQLite database.",
+      "trigger": "PreToolUse",
+      "matcher": "shell|execute_bash",
+      "action": {
+        "type": "command",
+        "command": "python3 -c \"import sys,json; d=sys.stdin.read(); bad=['rm -rf','splitsmart.db']; sys.exit(2 if any(b in d for b in bad) else 0)\""
+      },
+      "timeout": 10
+    }
+  ]
+}

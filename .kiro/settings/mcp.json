@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "splitsmart": {
+      "command": "uv",
+      "args": ["run", "--directory", ".", "splitsmart-mcp"],
+      "env": { "SPLITSMART_DB": "splitsmart.db" },
+      "disabled": false,
+      "autoApprove": ["list_groups", "get_group", "get_balances", "settle_up"]
+    },
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "disabled": false
+    }
+  }
+}

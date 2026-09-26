@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "splitsmart",
+  "version": "1.0.0",
+  "description": "Split group expenses fairly: record who paid, compute balances in integer cents and produce a minimal settle-up plan via the SplitSmart MCP server.",
+  "author": {
+    "name": "Aswani Sahoo",
+    "url": "https://github.com/AswaniSahoo"
+  },
+  "keywords": ["expense", "expenses", "split", "splitwise", "bill", "settle up", "who owes", "trip budget", "flatmates", "splitsmart"],
+  "homepage": "https://github.com/AswaniSahoo/splitsmart",
+  "repository": "https://github.com/AswaniSahoo/splitsmart",
+  "license": "MIT"
+}

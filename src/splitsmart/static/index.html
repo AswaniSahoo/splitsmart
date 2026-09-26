@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SplitSmart</title>
+<style>
+  :root { --bg:#0f0b1a; --card:#1b1530; --fg:#f2eefc; --muted:#b5abd1; --accent:#9d6bff; --pos:#5be3a1; --neg:#ff8a8a; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width: 960px; margin: 0 auto; padding: 1.5rem; }
+  h1 { margin: 0 0 .25rem; } p.sub { color: var(--muted); margin-top: 0; }
+  .grid { display:grid; gap:1rem; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  section { background:var(--card); border-radius:12px; padding:1rem; }
+  h2 { font-size:1.1rem; margin-top:0; }
+  label { display:block; font-size:.9rem; color:var(--muted); margin:.5rem 0 .2rem; }
+  input, select { width:100%; padding:.5rem; border-radius:8px; border:1px solid #3a3160; background:#120e22; color:var(--fg); font-size:1rem; }
+  button { margin-top:.75rem; padding:.55rem 1rem; border:0; border-radius:8px; background:var(--accent); color:#fff; font-weight:600; cursor:pointer; font-size:1rem; }
+  button.link { background:none; color:var(--neg); padding:0; margin:0; font-weight:400; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 3px solid #ffd166; outline-offset: 2px; }
+  fieldset { border:0; padding:0; margin:0; } legend { font-size:.9rem; color:var(--muted); margin:.5rem 0 .2rem; }
+  .chk { display:inline-flex; align-items:center; gap:.3rem; margin-right:.75rem; color:var(--fg); }
+  .chk input { width:auto; }
+  table { width:100%; border-collapse: collapse; } td, th { text-align:left; padding:.35rem .25rem; border-bottom:1px solid #2c2450; }
+  .pos { color:var(--pos); } .neg { color:var(--neg); }
+  #msg { min-height:1.4rem; color:#ffd166; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SplitSmart</h1>
+  <p class="sub">Split group expenses fairly. Built with Kiro.</p>
+  <p id="msg" role="status" aria-live="polite"></p>
+
+  <div class="grid">
+    <section aria-labelledby="h-new">
+      <h2 id="h-new">New group</h2>
+      <form id="group-form">
+        <label for="g-name">Group name</label>
+        <input id="g-name" required maxlength="60" placeholder="Goa trip">
+        <label for="g-members">Members (comma separated)</label>
+        <input id="g-members" required placeholder="Asha, Ravi, Meera">
+        <button type="submit">Create group</button>
+      </form>
+      <label for="g-select">Open group</label>
+      <select id="g-select"></select>
+    </section>
+
+    <section aria-labelledby="h-exp">
+      <h2 id="h-exp">Add expense</h2>
+      <form id="exp-form">
+        <label for="e-desc">Description</label>
+        <input id="e-desc" required maxlength="60" placeholder="Dinner">
+        <label for="e-amount">Amount (₹)</label>
+        <input id="e-amount" required type="number" min="0.01" step="0.01" placeholder="1200.00">
+        <label for="e-payer">Paid by</label>
+        <select id="e-payer"></select>
+        <fieldset id="e-parts"><legend>Split between</legend></fieldset>
+        <button type="submit">Add expense</button>
+      </form>
+      <label for="m-name">Add member</label>
+      <form id="member-form"><input id="m-name" maxlength="60" placeholder="New member"><button type="submit">Add member</button></form>
+    </section>
+  </div>
+
+  <div class="grid" style="margin-top:1rem">
+    <section aria-labelledby="h-bal"><h2 id="h-bal">Balances</h2><table><tbody id="balances"></tbody></table></section>
+    <section aria-labelledby="h-set"><h2 id="h-set">Settle up</h2><ul id="settle"></ul></section>
+  </div>
+  <section aria-labelledby="h-list" style="margin-top:1rem">
+    <h2 id="h-list">Expenses</h2>
+    <table><thead><tr><th scope="col">What</th><th scope="col">Amount</th><th scope="col">Paid by</th><th scope="col">Split</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+    <tbody id="expenses"></tbody></table>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+let groupId = null;
+
+function msg(text) { $("msg").textContent = text || ""; }
+function el(tag, text, cls) { const e = document.createElement(tag); if (text !== undefined) e.textContent = text; if (cls) e.className = cls; return e; }
+const fmt = (c) => (c < 0 ? "-" : "") + "₹" + (Math.abs(c) / 100).toFixed(2);
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, { headers: { "Content-Type": "application/json" }, ...opts });
+  if (res.status === 204) return null;
+  const data = await res.json();
+  if (!res.ok) throw new Error(typeof data.detail === "string" ? data.detail : "Invalid input");
+  return data;
+}
+
+async function loadGroups(selectId) {
+  const groups = await api("/api/groups");
+  const sel = $("g-select"); sel.replaceChildren();
+  groups.forEach(g => { const o = el("option", g.name); o.value = g.id; sel.append(o); });
+  if (selectId) sel.value = selectId;
+  groupId = sel.value ? Number(sel.value) : null;
+  await render();
+}
+
+async function render() {
+  if (!groupId) return;
+  const [g, bal, plan] = await Promise.all([
+    api(`/api/groups/${groupId}`), api(`/api/groups/${groupId}/balances`), api(`/api/groups/${groupId}/settle`)]);
+  const payer = $("e-payer"); payer.replaceChildren();
+  const parts = $("e-parts"); parts.replaceChildren(el("legend", "Split between"));
+  g.members.forEach((m, i) => {
+    const o = el("option", m); o.value = m; payer.append(o);
+    const lab = el("label", "", "chk"); const cb = el("input"); cb.type = "checkbox"; cb.value = m; cb.checked = true; cb.id = "p" + i;
+    lab.htmlFor = cb.id; lab.append(cb, document.createTextNode(m)); parts.append(lab);
+  });
+  $("balances").replaceChildren(...bal.map(b => {
+    const tr = el("tr"); tr.append(el("td", b.member), el("td", fmt(b.balance_cents), b.balance_cents > 0 ? "pos" : b.balance_cents < 0 ? "neg" : "")); return tr;
+  }));
+  $("settle").replaceChildren(...(plan.length ? plan.map(t => el("li", `${t.from} pays ${t.to} ${fmt(t.amount_cents)}`)) : [el("li", "All settled up 🎉")]));
+  $("expenses").replaceChildren(...g.expenses.map(e => {
+    const tr = el("tr"); const del = el("button", "Delete", "link"); del.setAttribute("aria-label", `Delete ${e.description}`);
+    del.onclick = async () => { await api(`/api/groups/${groupId}/expenses/${e.id}`, { method: "DELETE" }); msg("Expense deleted"); render(); };
+    const td = el("td"); td.append(del);
+    tr.append(el("td", e.description), el("td", fmt(e.amount_cents)), el("td", e.payer), el("td", e.participants.join(", ")), td); return tr;
+  }));
+}
+
+$("group-form").onsubmit = async (ev) => {
+  ev.preventDefault();
+  try {
+    const members = $("g-members").value.split(",").map(s => s.trim()).filter(Boolean);
+    const g = await api("/api/groups", { method: "POST", body: JSON.stringify({ name: $("g-name").value, members }) });
+    ev.target.reset(); msg(`Created ${g.name}`); await loadGroups(g.id);
+  } catch (e) { msg(e.message); }
+};
+$("g-select").onchange = (ev) => { groupId = Number(ev.target.value); render(); };
+$("exp-form").onsubmit = async (ev) => {
+  ev.preventDefault();
+  if (!groupId) return msg("Create a group first");
+  // Convert rupees to integer paise once, at the edge (see money-handling steering).
+  const amount_cents = Math.round(Number($("e-amount").value) * 100);
+  const participants = [...document.querySelectorAll("#e-parts input:checked")].map(c => c.value);
+  try {
+    await api(`/api/groups/${groupId}/expenses`, { method: "POST", body: JSON.stringify({
+      description: $("e-desc").value, amount_cents, payer: $("e-payer").value, participants }) });
+    $("e-desc").value = ""; $("e-amount").value = ""; msg("Expense added"); render();
+  } catch (e) { msg(e.message); }
+};
+$("member-form").onsubmit = async (ev) => {
+  ev.preventDefault();
+  if (!groupId) return msg("Create a group first");
+  try { await api(`/api/groups/${groupId}/members`, { method: "POST", body: JSON.stringify({ name: $("m-name").value }) });
+    $("m-name").value = ""; msg("Member added"); render(); } catch (e) { msg(e.message); }
+};
+loadGroups();
+</script>
+<style>.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}</style>
+</body>
+</html>

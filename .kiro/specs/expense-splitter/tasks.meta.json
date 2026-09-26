@@ -1,0 +1,105 @@
+{
+  "pbtResults": {
+    "2.4 Write property test for order independence": {
+      "status": "passed",
+      "lastRunTimestamp": 1790450636017
+    },
+    "2.7 Write property test for settle-up transfer bound": {
+      "status": "passed",
+      "lastRunTimestamp": 1790452991874
+    }
+  },
+  "executionHistory": {
+    "2.2 Write property test for split conservation": [
+      {
+        "executionId": "ecd0d784-d7c1-453b-bd57-d1b8d5bba795",
+        "chatSessionId": "sess_72266b0b-177f-40b0-9d28-ed7404a37ee6",
+        "timestamp": 1790446579025
+      },
+      {
+        "executionId": "ecd0d784-d7c1-453b-bd57-d1b8d5bba795",
+        "chatSessionId": "sess_72266b0b-177f-40b0-9d28-ed7404a37ee6",
+        "timestamp": 1790446647027
+      }
+    ],
+    "2. Implement pure ledger logic": [
+      {
+        "executionId": "ecd0d784-d7c1-453b-bd57-d1b8d5bba795",
+        "chatSessionId": "sess_72266b0b-177f-40b0-9d28-ed7404a37ee6",
+        "timestamp": 1790446647077
+      }
+    ],
+    "2.3 Write property test for balances summing to zero": [
+      {
+        "executionId": "bca79476-587e-4e46-8a23-7c3bc3e769cd",
+        "chatSessionId": "sess_1794c60c-6e4b-45b3-9627-84aacba5a19c",
+        "timestamp": 1790450099061
+      },
+      {
+        "executionId": "bca79476-587e-4e46-8a23-7c3bc3e769cd",
+        "chatSessionId": "sess_1794c60c-6e4b-45b3-9627-84aacba5a19c",
+        "timestamp": 1790450250848
+      }
+    ],
+    "2.4 Write property test for order independence": [
+      {
+        "executionId": "b5070edd-06a1-40fd-9563-97dfda0c523e",
+        "chatSessionId": "sess_079a9d71-556d-446a-9bbb-2d841529b2e6",
+        "timestamp": 1790450348374
+      },
+      {
+        "executionId": "b5070edd-06a1-40fd-9563-97dfda0c523e",
+        "chatSessionId": "sess_079a9d71-556d-446a-9bbb-2d841529b2e6",
+        "timestamp": 1790450659150
+      }
+    ],
+    "2.5 Write property test for delete-as-undo": [
+      {
+        "executionId": "14c0054c-eb6d-4b25-8222-dcd4dc40a9ee",
+        "chatSessionId": "sess_57f64568-3dcc-44b6-910a-79fac30b0933",
+        "timestamp": 1790450722629
+      },
+      {
+        "executionId": "14c0054c-eb6d-4b25-8222-dcd4dc40a9ee",
+        "chatSessionId": "sess_57f64568-3dcc-44b6-910a-79fac30b0933",
+        "timestamp": 1790450798730
+      }
+    ],
+    "2.6 Write property test for settle-up clearing debts": [
+      {
+        "executionId": "3ab52de3-b89e-4e31-93f9-65f5f5446780",
+        "chatSessionId": "sess_839102cc-354e-4ba8-a013-f2ad032bda01",
+        "timestamp": 1790450859974
+      },
+      {
+        "executionId": "3ab52de3-b89e-4e31-93f9-65f5f5446780",
+        "chatSessionId": "sess_839102cc-354e-4ba8-a013-f2ad032bda01",
+        "timestamp": 1790450949258
+      }
+    ],
+    "2.7 Write property test for settle-up transfer bound": [
+      {
+        "executionId": "c4764597-6213-4c3b-8313-6fc8cf6119b5",
+        "chatSessionId": "sess_7d31dcdc-fa0c-47d8-bffd-80cc03246a60",
+        "timestamp": 1790451014360
+      },
+      {
+        "executionId": "c4764597-6213-4c3b-8313-6fc8cf6119b5",
+        "chatSessionId": "sess_7d31dcdc-fa0c-47d8-bffd-80cc03246a60",
+        "timestamp": 1790453007083
+      }
+    ],
+    "2.8 Write property test for money formatting round-trip": [
+      {
+        "executionId": "5288bae3-a477-4f42-b2a5-31b726c5ed7e",
+        "chatSessionId": "sess_d8d352e3-54ae-4775-9ada-144c1ad8a9a1",
+        "timestamp": 1790453066471
+      },
+      {
+        "executionId": "5288bae3-a477-4f42-b2a5-31b726c5ed7e",
+        "chatSessionId": "sess_d8d352e3-54ae-4775-9ada-144c1ad8a9a1",
+        "timestamp": 1790453144742
+      }
+    ]
+  }
+}

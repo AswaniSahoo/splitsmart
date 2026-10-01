@@ -4,10 +4,7 @@
     "splitsmart": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/AswaniSahoo/splitsmart", "splitsmart-mcp"],
-      "env": {
-        "SPLITSMART_DB": "${SPLITSMART_DB}"
-      }
+      "args": ["--from", "git+https://github.com/AswaniSahoo/splitsmart", "splitsmart-mcp"]
     }
   }
 }

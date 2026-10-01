@@ -43,7 +43,11 @@ def _clean_name(name: str) -> str:
 
 class Store:
     def __init__(self, path: str | None = None) -> None:
-        self.path = path or os.environ.get("SPLITSMART_DB", "splitsmart.db")
+        env_path = os.environ.get("SPLITSMART_DB", "").strip()
+        # Treat an empty or unexpanded "${...}" value as unset; "" would make SQLite use a throwaway DB.
+        if not env_path or env_path.startswith("${"):
+            env_path = "splitsmart.db"
+        self.path = path or env_path
         with closing(self._connect()) as conn, conn:
             conn.executescript(SCHEMA)
 

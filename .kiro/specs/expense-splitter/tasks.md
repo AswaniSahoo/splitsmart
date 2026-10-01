@@ -47,4 +47,4 @@
   - [ ]* 5.2 MCP in-process smoke test
     - _Requirements: 5.3_
 
-- [ ] 6. Checkpoint - all tests pass (`uv run pytest -q`)
+- [x] 6. Checkpoint - all tests pass (`uv run pytest -q`)

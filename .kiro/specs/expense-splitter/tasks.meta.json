@@ -120,6 +120,25 @@
         "chatSessionId": "sess_d8d352e3-54ae-4775-9ada-144c1ad8a9a1",
         "timestamp": 1790453144742
       }
+    ],
+    "4.3 API example tests": [
+      {
+        "executionId": "4abcb0a1-eaa6-4e6f-b411-faf0dea8c841",
+        "chatSessionId": "sess_2bb54456-4a43-4694-bce5-ff5cee099226",
+        "timestamp": 1790868225980
+      }
+    ],
+    "5.2 MCP in-process smoke test": [
+      {
+        "executionId": "feeadf38-4bc7-4176-ad85-e33255c0e282",
+        "chatSessionId": "sess_b2c388df-05d9-41dc-ba03-5cda53273f89",
+        "timestamp": 1790868393724
+      },
+      {
+        "executionId": "feeadf38-4bc7-4176-ad85-e33255c0e282",
+        "chatSessionId": "sess_b2c388df-05d9-41dc-ba03-5cda53273f89",
+        "timestamp": 1790868470643
+      }
     ]
   }
 }

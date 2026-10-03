@@ -12,7 +12,7 @@ Built with [Kiro](https://kiro.dev) for the **Kiro University Challenge** (#Kiro
 git clone https://github.com/AswaniSahoo/splitsmart && cd splitsmart
 uv sync
 uv run splitsmart          # web UI + API at http://127.0.0.1:8000
-uv run pytest -q           # 21 tests incl. 7 property-based tests
+uv run pytest -q           # 22 tests incl. 7 property-based tests
 uv run splitsmart-mcp      # MCP server (stdio) — normally started by Kiro via .kiro/settings/mcp.json
 ```
 

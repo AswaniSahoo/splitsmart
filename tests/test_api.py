@@ -69,7 +69,7 @@ def test_non_positive_amount_rejected(client, amount):
     assert r.status_code == 422
 
 
-def test_unknown_member_rejected(client):
+def test_unknown_payer_rejected(client):
     gid = make_group(client)
     r = client.post(
         f"/api/groups/{gid}/expenses",
@@ -78,9 +78,21 @@ def test_unknown_member_rejected(client):
     assert r.status_code == 422 and "Zed" in r.json()["detail"]
 
 
+def test_unknown_participant_rejected(client):
+    gid = make_group(client)
+    r = client.post(
+        f"/api/groups/{gid}/expenses",
+        json={"description": "x", "amount_cents": 100, "payer": "Asha", "participants": ["Asha", "Zed"]},
+    )
+    assert r.status_code == 422 and "Zed" in r.json()["detail"]
+
+
 def test_add_member_and_delete_expense(client):
     gid = make_group(client, ["Asha", "Ravi"])
-    assert client.post(f"/api/groups/{gid}/members", json={"name": "Kiran"}).status_code == 201
+    r = client.post(f"/api/groups/{gid}/members", json={"name": "Kiran"})
+    assert r.status_code == 201
+    bal = {b["member"]: b["balance_cents"] for b in client.get(f"/api/groups/{gid}/balances").json()}
+    assert bal["Kiran"] == 0
     eid = client.post(
         f"/api/groups/{gid}/expenses",
         json={

@@ -22,19 +22,61 @@ def test_mcp_tools_end_to_end(tmp_path):
 
     async def run():
         names = {t.name for t in await server.list_tools()}
-        assert {"create_group", "add_expense", "get_balances", "settle_up"} <= names
-        g = _payload(await server.call_tool("create_group", {"name": "Flat", "members": ["A", "B"]}))
-        await server.call_tool(
+        assert {
+            "create_group",
+            "list_groups",
+            "get_group",
+            "add_member",
             "add_expense",
-            {
-                "group_id": g["id"],
-                "description": "Rent",
-                "amount_cents": 2000,
-                "payer": "A",
-                "participants": ["A", "B"],
-            },
+            "delete_expense",
+            "get_balances",
+            "settle_up",
+        } <= names
+
+        g = _payload(await server.call_tool("create_group", {"name": "Flat", "members": ["A", "B"]}))
+        gid = g["id"]
+
+        groups = _payload(await server.call_tool("list_groups", {}))
+        assert any(x["id"] == gid and x["name"] == "Flat" for x in groups)
+
+        _payload(await server.call_tool("add_member", {"group_id": gid, "name": "C"}))
+        group = _payload(await server.call_tool("get_group", {"group_id": gid}))
+        assert group["members"] == ["A", "B", "C"]
+        assert group["expenses"] == []
+
+        expense = _payload(
+            await server.call_tool(
+                "add_expense",
+                {
+                    "group_id": gid,
+                    "description": "Rent",
+                    "amount_cents": 3000,
+                    "payer": "A",
+                    "participants": ["A", "B", "C"],
+                },
+            )
         )
-        plan = _payload(await server.call_tool("settle_up", {"group_id": g["id"]}))
-        assert plan == [{"from": "B", "to": "A", "amount_cents": 1000, "display": "10.00"}]
+        eid = expense["id"]
+
+        bal = {
+            b["member"]: b["balance_cents"]
+            for b in _payload(await server.call_tool("get_balances", {"group_id": gid}))
+        }
+        assert bal == {"A": 2000, "B": -1000, "C": -1000}
+
+        plan = _payload(await server.call_tool("settle_up", {"group_id": gid}))
+        assert sorted((t["from"], t["to"], t["amount_cents"]) for t in plan) == [
+            ("B", "A", 1000),
+            ("C", "A", 1000),
+        ]
+
+        delete_result = _payload(
+            await server.call_tool("delete_expense", {"group_id": gid, "expense_id": eid})
+        )
+        assert delete_result == f"deleted expense {eid}"
+
+        bal_after = _payload(await server.call_tool("get_balances", {"group_id": gid}))
+        assert all(b["balance_cents"] == 0 for b in bal_after)
+        assert _payload(await server.call_tool("settle_up", {"group_id": gid})) == []
 
     anyio.run(run)

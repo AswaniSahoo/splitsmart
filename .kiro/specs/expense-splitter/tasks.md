@@ -38,13 +38,13 @@
     - _Requirements: 5.1, 1.4, 2.3, 2.4_
   - [x] 4.2 One-page web UI at `/`
     - _Requirements: 5.2, 5.4_
-  - [ ]* 4.3 API example tests
+  - [x] 4.3 API example tests
     - _Requirements: 1.1–1.4, 2.1–2.5, 3.1, 4.1_
 
 - [x] 5. Implement MCP server
   - [x] 5.1 Tools over stdio sharing the same DB
     - _Requirements: 5.3_
-  - [ ]* 5.2 MCP in-process smoke test
+  - [x] 5.2 MCP in-process smoke test
     - _Requirements: 5.3_
 
 - [x] 6. Checkpoint - all tests pass (`uv run pytest -q`)
